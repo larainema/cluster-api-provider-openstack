@@ -34,7 +34,9 @@ jobs:
           git fetch upstream
 
       - name: Checkout base branch
-        run: git checkout "upstream/${{ github.event.pull_request.base.ref }}"
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: git checkout "upstream/${BASE_REF}"
 
       - name: Get list of changed Markdown files
         id: changed-files
