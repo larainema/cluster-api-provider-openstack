@@ -38,8 +38,11 @@ jobs:
 
       - name: Get list of changed Markdown files
         id: changed-files
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          git diff --name-only "upstream/${{ github.event.pull_request.base.ref }}...${{ github.head_ref }}" -- "*.md" > changed-files.txt
+          git diff --name-only "upstream/${BASE_REF}...${HEAD_REF}" -- "*.md" > changed-files.txt
           cat changed-files.txt
           if [[ -s "changed-files.txt" ]]; then
             echo "Changed md files found"
@@ -47,7 +50,9 @@ jobs:
           fi
 
       - name: Switch to PR branch
-        run: git checkout ${{ github.head_ref }}
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: git checkout "${HEAD_REF}" 
 
       - name: Check links in changed files
         if: env.foundFiles == 'true'
